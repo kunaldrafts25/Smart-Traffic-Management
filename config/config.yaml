@@ -1,0 +1,424 @@
+# Traffic Management System Configuration
+
+# Application Settings
+app:
+  name: "Advanced Traffic Management System"
+  version: "2.0.0"
+  debug: false
+  log_level: "INFO"
+
+# Model Paths and Settings
+models:
+  # Legacy YOLOv4 (for backward compatibility)
+  yolo_legacy:
+    weights_path: "models/yolov4.weights"
+    config_path: "models/yolov4.cfg"
+    classes_path: "models/coco.names"
+    confidence_threshold: 0.5
+    nms_threshold: 0.4
+    input_size: [416, 416]
+
+  # Modern YOLO (YOLOv8/YOLOv11)
+  yolo:
+    model_name: "yolov8n.pt"  # Options: yolov8n.pt, yolov8s.pt, yolov8m.pt, yolov8l.pt, yolov8x.pt
+    confidence_threshold: 0.5
+    device: "auto"  # auto, cpu, cuda
+    input_size: [640, 640]
+
+    # Phase 2D GPU Acceleration and Multi-camera
+    gpu_acceleration: true
+    batch_processing: true
+    tensorrt_optimization: false  # Advanced GPU optimization
+    multi_stream_processing: true
+
+  lstm:
+    model_path: "models/lstm_traffic_predictor.h5"
+    sequence_length: 10
+    features: ["traffic_density", "avg_speed", "time_of_day"]
+    epochs: 50
+    batch_size: 32
+    learning_rate: 0.001
+
+    # Phase 2B Enhanced Features
+    prediction_horizon: 5
+    real_time_type: "transformer"  # standard, attention, transformer, uncertainty, multi_intersection
+    num_intersections: 4
+    update_frequency: 100  # frames between model updates
+    buffer_size: 1000
+
+    # Advanced model types available
+    model_types:
+      - "standard"
+      - "bidirectional"
+      - "attention"
+      - "multi_step"
+      - "transformer"
+      - "uncertainty"
+      - "multi_intersection"
+
+  reinforcement_learning:
+    model_path: "models/rl_signal_controller.pkl"
+    learning_rate: 0.001
+    epsilon: 0.1
+    gamma: 0.95
+    memory_size: 10000
+
+    # Phase 2C Enhanced RL Features
+    agent_type: "DoubleDQN"  # Options: DQN, DoubleDQN, DuelingDQN, ActorCritic
+    shared_learning: true
+    coordination_enabled: true
+    multi_intersection_support: true
+
+    # Advanced algorithms configuration
+    algorithms:
+      double_dqn:
+        enabled: true
+        target_update_frequency: 100
+
+      dueling_dqn:
+        enabled: true
+        value_stream_size: 32
+        advantage_stream_size: 32
+
+      actor_critic:
+        enabled: true
+        actor_learning_rate: 0.001
+        critic_learning_rate: 0.002
+        entropy_coefficient: 0.01
+
+    # LSTM integration
+    lstm_integration:
+      enabled: true
+      prediction_weight: 0.3
+      confidence_threshold: 0.7
+
+    # Multi-intersection coordination
+    coordination:
+      network_size: [128, 64]
+      coordination_weight: 0.5
+      shared_experience_buffer_size: 50000
+
+# Phase 2D Multi-Camera Coordination
+multi_camera:
+  enabled: true
+  max_concurrent_streams: 8
+  target_fps: 5.0
+  sync_tolerance_ms: 200.0
+
+  # Camera synchronization
+  synchronization:
+    enabled: true
+    buffer_size: 10
+    drift_correction: true
+    quality_threshold: 0.7
+
+  # Detection fusion
+  fusion:
+    overlap_threshold: 0.5
+    confidence_weight: 0.7
+    spatial_weight: 0.3
+    deduplication_enabled: true
+
+  # Performance optimization
+  performance:
+    gpu_batch_processing: true
+    parallel_detection: true
+    memory_optimization: true
+    latency_target_ms: 200
+
+# Public Traffic Camera Sources Configuration
+traffic_cameras:
+  # Enable public camera feeds
+  public_feeds_enabled: true
+
+  # Fallback to local cameras if public feeds fail
+  fallback_to_local: true
+
+  # Connection settings
+  connection:
+    timeout: 15
+    retry_attempts: 3
+    retry_delay: 5
+    health_check_interval: 30
+
+  # Public camera sources
+  public_sources:
+    # Working sample video files as fallback for public cameras
+    - id: "sample_traffic_001"
+      name: "Sample Traffic Video 1"
+      url: "data/sample_videos/traffic_intersection_1.mp4"
+      type: "video_file"
+      lat: 40.7128
+      lon: -74.0060
+      intersection_id: "sample_001"
+      priority: 1
+      refresh_interval: 5
+
+    - id: "sample_traffic_002"
+      name: "Sample Traffic Video 2"
+      url: "data/sample_videos/traffic_intersection_2.mp4"
+      type: "video_file"
+      lat: 40.7589
+      lon: -73.9851
+      intersection_id: "sample_002"
+      priority: 2
+      refresh_interval: 5
+
+    # Example working public camera URLs (replace with actual working feeds)
+    - id: "webcam_test"
+      name: "Test Webcam Feed"
+      url: "0"  # Default webcam
+      type: "webcam"
+      lat: 40.7128
+      lon: -74.0060
+      intersection_id: "webcam_test"
+      priority: 3
+      refresh_interval: 1
+
+    # Note: Add actual working public traffic camera URLs here
+    # Examples of real traffic camera formats:
+    # - RTSP: rtsp://username:password@camera-ip:554/stream
+    # - HTTP MJPEG: http://camera-ip/mjpeg_stream
+    # - HLS: http://camera-ip/stream.m3u8
+
+  # Backup/sample video sources when no public cameras available
+  backup_sources:
+    - id: "sample_video_001"
+      name: "Sample Traffic Video 1"
+      url: "data/sample_videos/traffic_sample_1.mp4"
+      type: "video_file"
+      intersection_id: "sample_001"
+      loop: true
+
+    - id: "sample_video_002"
+      name: "Sample Traffic Video 2"
+      url: "data/sample_videos/traffic_sample_2.mp4"
+      type: "video_file"
+      intersection_id: "sample_002"
+      loop: true
+
+# Data Processing
+data:
+  input_sources:
+    - type: "video"
+      path: "data/videos/"
+    - type: "camera"
+      url: "rtmp://localhost:1935/live/stream"
+
+  output_path: "data/processed/"
+  backup_path: "data/backup/"
+
+  preprocessing:
+    resize_frames: true
+    target_size: [640, 480]
+    normalize: true
+    augmentation: false
+
+# Traffic Signal Configuration - Pune Street Names
+traffic_signals:
+  intersections:
+    - id: "fc_jm_junction"
+      name: "FC Road & JM Road Junction"
+      display_name: "FC Road & JM Road"
+      area: "Deccan Gymkhana"
+      lanes: 6
+      default_timing: [45, 5, 40, 5]  # [green, yellow, red, all_red]
+      coordinates: [18.5204, 73.8567]
+      traffic_volume: "high"
+      peak_hours: ["08:00-10:00", "18:00-21:00"]
+
+    - id: "shivajinagar_deccan"
+      name: "Shivajinagar & Deccan Gymkhana Intersection"
+      display_name: "Shivajinagar & Deccan"
+      area: "Shivajinagar"
+      lanes: 4
+      default_timing: [35, 5, 30, 5]
+      coordinates: [18.5314, 73.8446]
+      traffic_volume: "medium"
+      peak_hours: ["08:30-10:30", "17:30-20:30"]
+
+    - id: "baner_aundh_crossing"
+      name: "Baner Road & Aundh Road Crossing"
+      display_name: "Baner & Aundh Road"
+      area: "Baner"
+      lanes: 8
+      default_timing: [50, 5, 45, 5]
+      coordinates: [18.5679, 73.7797]
+      traffic_volume: "very_high"
+      peak_hours: ["07:30-10:00", "17:00-21:00"]
+
+    - id: "karve_senapati_junction"
+      name: "Karve Road & Senapati Bapat Road Junction"
+      display_name: "Karve & Senapati Bapat"
+      area: "Erandwane"
+      lanes: 6
+      default_timing: [40, 5, 35, 5]
+      coordinates: [18.5089, 73.8278]
+      traffic_volume: "high"
+      peak_hours: ["08:00-10:30", "18:00-20:30"]
+
+    - id: "camp_mg_intersection"
+      name: "Camp & MG Road Intersection"
+      display_name: "Camp & MG Road"
+      area: "Camp"
+      lanes: 4
+      default_timing: [30, 5, 25, 5]
+      coordinates: [18.5196, 73.8553]
+      traffic_volume: "medium"
+      peak_hours: ["09:00-11:00", "18:30-20:00"]
+
+  timing_constraints:
+    min_green: 15
+    max_green: 120
+    yellow_duration: 5
+    all_red_duration: 3
+
+  # Signal Performance Analytics Configuration
+  performance_analytics:
+    enabled: true
+    metrics:
+      cycle_time_tracking: true
+      phase_duration_analysis: true
+      wait_time_measurement: true
+      throughput_calculation: true
+      coordination_efficiency: true
+      rl_decision_reasoning: true
+
+    thresholds:
+      optimal_cycle_time: [60, 120]  # seconds [min, max]
+      max_wait_time: 180  # seconds
+      min_throughput_efficiency: 0.7  # 70%
+      coordination_score_target: 0.8  # 80%
+
+    reporting:
+      real_time_updates: true
+      historical_comparison: true
+      optimization_impact: true
+      performance_trends: true
+
+# Environmental Impact
+environment:
+  aqi_calculation:
+    enabled: true
+    factors:
+      vehicle_count_weight: 0.4
+      speed_weight: 0.3
+      congestion_weight: 0.3
+    pollution_coefficients:
+      co2_per_vehicle: 2.3  # kg per hour
+      nox_per_vehicle: 0.05
+      pm25_per_vehicle: 0.02
+
+# Database Configuration
+database:
+  type: "sqlite"
+  path: "data/tms_database.db"
+  backup_interval: 3600  # seconds
+
+# API Configuration
+api:
+  host: "localhost"
+  port: 8000
+  cors_enabled: true
+  rate_limiting:
+    enabled: true
+    requests_per_minute: 100
+
+# Streamlit Dashboard
+dashboard:
+  title: "Traffic Management System Dashboard"
+  port: 8501
+  theme: "dark"
+  auto_refresh_interval: 5  # seconds
+
+  pages:
+    - name: "Live Monitoring"
+      enabled: true
+    - name: "Traffic Analysis"
+      enabled: true
+    - name: "Signal Control"
+      enabled: true
+    - name: "Environmental Impact"
+      enabled: true
+    - name: "Settings"
+      enabled: true
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  file_path: "logs/tms.log"
+  max_file_size: "10MB"
+  backup_count: 5
+
+  loggers:
+    vehicle_detection: "DEBUG"
+    traffic_prediction: "INFO"
+    signal_control: "INFO"
+    database: "WARNING"
+
+# Performance Settings
+performance:
+  max_concurrent_streams: 4
+  frame_skip_ratio: 2  # Process every nth frame
+  gpu_enabled: true
+  gpu_memory_limit: 0.8  # 80% of available GPU memory
+
+# Alerts and Notifications
+alerts:
+  enabled: true
+  email:
+    smtp_server: "smtp.gmail.com"
+    smtp_port: 587
+    username: "alerts@tms.com"
+    password: "your_password"
+
+  thresholds:
+    high_congestion: 80  # percentage
+    accident_detection: true
+    system_error: true
+    low_performance: 60  # fps threshold
+
+# Training Configuration
+training:
+  # Data Collection
+  data_collection:
+    max_videos: 20
+    max_frames_per_video: 2000
+    frame_skip_ratio: 5
+    augmentation_factor: 3
+
+  # LSTM Training
+  lstm:
+    batch_size: 32
+    epochs: 100
+    learning_rate: 0.001
+    validation_split: 0.2
+    sequence_length: 15
+    early_stopping_patience: 15
+    model_types: ['standard', 'bidirectional', 'attention']
+
+  # RL Training
+  rl:
+    episodes: 2000
+    batch_size: 64
+    learning_rate: 0.0001
+    epsilon_start: 1.0
+    epsilon_end: 0.01
+    epsilon_decay: 0.995
+    gamma: 0.95
+    target_update_freq: 100
+    memory_size: 10000
+
+  # Evaluation
+  evaluation:
+    test_split: 0.2
+    cross_validation_folds: 5
+    metrics: ['mse', 'mae', 'r2', 'mape']
+
+  # Model Saving
+  model_saving:
+    save_best_only: true
+    save_frequency: 10
+    model_dir: 'models/trained'
+    checkpoint_dir: 'models/checkpoints'

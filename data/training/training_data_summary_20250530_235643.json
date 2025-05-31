@@ -1,0 +1,20 @@
+{
+  "metadata": {
+    "sources": [
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01638.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01639.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01640.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01641.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01642.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01643.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01644.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01645.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01646.avi",
+      "data\\kaggle\\highway-traffic-videos\\cctv052x2004080516x01647.avi"
+    ],
+    "collection_time": "2025-05-30T23:55:27.436680",
+    "total_frames": 516
+  },
+  "total_detections": 516,
+  "total_patterns": 516
+}
