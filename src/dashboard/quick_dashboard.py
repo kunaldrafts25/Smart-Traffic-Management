@@ -20,8 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-"""
-"""
+
 Smart Traffic Dashboard
 
 A comprehensive dashboard with live video feeds, real-time traffic signal visualization,
@@ -116,6 +115,15 @@ def _patch_streamlit_torch_compatibility():
 _patch_streamlit_torch_compatibility()
 
 import streamlit as st
+
+# MUST be the first Streamlit command - configure page immediately
+st.set_page_config(
+    page_title="Smart Traffic Dashboard",
+    page_icon="🚦",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
 import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
@@ -177,12 +185,6 @@ except Exception as e:
     print(f"WARNING: Unexpected error during model import: {e}")
     TRAINED_MODELS_AVAILABLE = False
     torch_available = False
-st.set_page_config(
-    page_title="Smart Traffic Dashboard",
-    page_icon="🚦",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
 
 st.markdown("""
 <style>
