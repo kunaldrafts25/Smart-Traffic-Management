@@ -1,0 +1,100 @@
+{
+  "version": "v5_final",
+  "curriculum_stages": [
+    "easy",
+    "balanced",
+    "hard"
+  ],
+  "episodes_per_stage": 400,
+  "total_episodes": 1200,
+  "results": {
+    "easy": {
+      "Fixed (45s)": {
+        "tp": 2144.8,
+        "em": 47051.7875,
+        "wait": 88335.125
+      },
+      "Fixed (60s)": {
+        "tp": 2124.775,
+        "em": 44412.875,
+        "wait": 83435.75
+      },
+      "Max Pressure": {
+        "tp": 2144.8875,
+        "em": 43972.8625,
+        "wait": 80935.625
+      },
+      "Vehicle Actuated": {
+        "tp": 2129.8875,
+        "em": 41772.29375,
+        "wait": 77175.4375
+      },
+      "RL-Final (Ours)": {
+        "tp": 2249.5625,
+        "em": 45335.36875,
+        "wait": 81249.8125
+      }
+    },
+    "balanced": {
+      "Fixed (45s)": {
+        "tp": 1286.9,
+        "em": 51776.01875,
+        "wait": 100222.6875
+      },
+      "Fixed (60s)": {
+        "tp": 1288.3125,
+        "em": 51705.4375,
+        "wait": 100250.375
+      },
+      "Max Pressure": {
+        "tp": 1270.5,
+        "em": 51784.34375,
+        "wait": 100238.3125
+      },
+      "Vehicle Actuated": {
+        "tp": 1282.3375,
+        "em": 51759.5375,
+        "wait": 100266.875
+      },
+      "RL-Final (Ours)": {
+        "tp": 1296.675,
+        "em": 52708.8375,
+        "wait": 100237.125
+      }
+    },
+    "hard": {
+      "Fixed (45s)": {
+        "tp": 1237.6125,
+        "em": 51717.0625,
+        "wait": 100221.875
+      },
+      "Fixed (60s)": {
+        "tp": 1245.7875,
+        "em": 51643.95625,
+        "wait": 100231.4375
+      },
+      "Max Pressure": {
+        "tp": 1224.675,
+        "em": 51692.86875,
+        "wait": 100241.8125
+      },
+      "Vehicle Actuated": {
+        "tp": 1228.1625,
+        "em": 51667.20625,
+        "wait": 100228.4375
+      },
+      "RL-Final (Ours)": {
+        "tp": 1231.375,
+        "em": 52578.51875,
+        "wait": 100230.6875
+      }
+    }
+  },
+  "features": [
+    "Curriculum learning",
+    "Prioritized experience replay",
+    "Environmental reward (emissions)",
+    "Dynamic scenarios (spikes, incidents)",
+    "Optimized hyperparameters"
+  ]
+}

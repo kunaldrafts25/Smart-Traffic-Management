@@ -1,32 +1,4 @@
-"""
-MIT License
-
-Copyright (c) 2024 kunalsingh2514@gmail.com
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-"""
-Modern Vehicle Detection System using YOLOv8/YOLOv11
-
-This module provides an advanced vehicle detection system using the latest YOLO models
-with improved camera handling, fallback mechanisms, and better error reporting.
-"""
+"""Modern vehicle detection using YOLOv8/YOLOv11 with camera management."""
 
 import cv2
 import numpy as np
@@ -471,9 +443,9 @@ class ModernVehicleDetector:
                 if frame is None or frame.size == 0:
                     raise VehicleDetectionError("Invalid input frame")
 
-                # Check if model is available, otherwise use simulation
+                # Model must be available for detection
                 if self.model is None:
-                    return self._simulate_vehicle_detection(frame, frame_id, processing_time=time.time() - start_time)
+                    raise VehicleDetectionError("YOLO model not loaded - cannot perform detection")
 
                 # Run YOLO inference
                 results = self.model(frame, conf=self.confidence_threshold, verbose=False)
@@ -844,74 +816,6 @@ class ModernVehicleDetector:
 
         return results
 
-    def _simulate_vehicle_detection(self, frame: np.ndarray, frame_id: int, processing_time: float) -> DetectionResult:
-        """
-        Simulate vehicle detection when YOLO model is not available.
-
-        Args:
-            frame: Input frame
-            frame_id: Frame identifier
-            processing_time: Processing time to simulate
-
-        Returns:
-            Simulated DetectionResult
-        """
-        # Simulate realistic vehicle detection
-        import random
-
-        # Generate random but realistic vehicle count (0-12 vehicles)
-        vehicle_count = random.randint(0, 12)
-
-        # Generate simulated detections
-        detections = []
-        confidence_scores = []
-
-        height, width = frame.shape[:2]
-
-        for i in range(vehicle_count):
-            # Generate random but realistic bounding boxes
-            x = random.randint(0, width - 100)
-            y = random.randint(0, height - 60)
-            w = random.randint(60, 150)
-            h = random.randint(40, 100)
-
-            # Ensure box stays within frame
-            x = min(x, width - w)
-            y = min(y, height - h)
-
-            confidence = random.uniform(0.6, 0.95)
-            class_name = random.choice(['car', 'truck', 'bus', 'motorcycle'])
-            class_id = {'car': 2, 'truck': 7, 'bus': 5, 'motorcycle': 3}[class_name]
-
-            bbox = BoundingBox(
-                x=x, y=y, width=w, height=h,
-                confidence=confidence, class_id=class_id, class_name=class_name
-            )
-
-            detection = {
-                'bbox': bbox,
-                'confidence': confidence,
-                'class_id': class_id,
-                'class_name': class_name,
-                'center_x': x + w // 2,
-                'center_y': y + h // 2
-            }
-
-            detections.append(detection)
-            confidence_scores.append(confidence)
-
-        # Simulate realistic processing time
-        simulated_processing_time = random.uniform(0.02, 0.08)
-
-        return DetectionResult(
-            vehicle_count=vehicle_count,
-            detections=detections,
-            confidence_scores=confidence_scores,
-            processing_time=simulated_processing_time,
-            frame_id=frame_id,
-            timestamp=time.time(),
-            model_name="Simulation Mode"
-        )
 
     def reset_stats(self) -> None:
         """Reset performance statistics."""

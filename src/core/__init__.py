@@ -23,8 +23,12 @@ SOFTWARE.
 """
 
 # Core modules for TMS
-from .vehicle_detector import VehicleDetector
+from .modern_vehicle_detector import ModernVehicleDetector
 from .traffic_predictor import TrafficPredictor
 from .signal_controller import SignalController
 
-__all__ = ['VehicleDetector', 'TrafficPredictor', 'SignalController']
+# Backward-compatible alias
+VehicleDetector = ModernVehicleDetector
+
+__all__ = ['VehicleDetector', 'ModernVehicleDetector', 'TrafficPredictor', 'SignalController']
+

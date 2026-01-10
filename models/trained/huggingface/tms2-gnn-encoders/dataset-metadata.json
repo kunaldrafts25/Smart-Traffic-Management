@@ -1,0 +1,16 @@
+{
+  "title": "TMS GNN Traffic Encoders",
+  "id": "Kunalsinghh25/tms2-gnn-models",
+  "licenses": [
+    {
+      "name": "Apache 2.0"
+    }
+  ],
+  "keywords": [
+    "traffic",
+    "deep-learning",
+    "reinforcement-learning",
+    "smart-city"
+  ],
+  "resources": []
+}

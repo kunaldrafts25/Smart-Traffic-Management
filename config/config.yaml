@@ -32,7 +32,7 @@ models:
     multi_stream_processing: true
 
   lstm:
-    model_path: "models/lstm_traffic_predictor.h5"
+    model_path: "models/trained/huggingface/tms-lstm-predictor/lstm_traffic_predictor.h5"
     sequence_length: 10
     features: ["traffic_density", "avg_speed", "time_of_day"]
     epochs: 50
@@ -57,7 +57,7 @@ models:
       - "multi_intersection"
 
   reinforcement_learning:
-    model_path: "models/rl_signal_controller.pkl"
+    model_path: "models/trained/huggingface/tms-rl-traffic-controller/double_dqn_best.pt"
     learning_rate: 0.001
     epsilon: 0.1
     gamma: 0.95
@@ -68,6 +68,12 @@ models:
     shared_learning: true
     coordination_enabled: true
     multi_intersection_support: true
+    
+    # HuggingFace trained models integration
+    use_trained_weights: true
+    trained_variant: "double_dqn"  # Options: dqn, double_dqn, dueling_dqn, adaptive, eco
+    auto_download: true
+
 
     # Advanced algorithms configuration
     algorithms:
