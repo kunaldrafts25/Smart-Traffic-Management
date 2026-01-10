@@ -109,3 +109,4 @@ dmypy.json
 # TensorFlow
 *.tfevents.*
 drive-download-20260110T151213Z-1-001.zip
+training_notebooks/
