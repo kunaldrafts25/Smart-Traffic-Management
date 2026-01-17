@@ -1,5 +1,3 @@
-# TMS2 Project .gitignore
-
 # Python
 __pycache__/
 *.py[cod]
@@ -7,106 +5,45 @@ __pycache__/
 *.so
 .Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
 *.egg
-MANIFEST
-
-# Virtual Environments
 venv/
 env/
-ENV/
-env.bak/
-venv.bak/
-tms_env/
-tms2_env/
 
 # IDE
 .vscode/
 .idea/
 *.swp
-*.swo
-*~
 
 # OS
 .DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
 Thumbs.db
 
 # Logs
 logs/
 *.log
 
-# Model files (large)
-models/*.weights
-models/*.h5
-models/*.pkl
-*.pt
-*.pth
-
-# Data files
-data/kaggle/
-data/processed/
-data/backup/
+# Data/Videos
 *.mp4
 *.avi
 *.mov
-*.mkv
+data/
 
-# Temporary files
-temp_*.mp4
-temp_*.avi
+# Temp
 *.tmp
 *.temp
 
-# Documentation builds
-docs/_build/
-docs/build/
-
-# Test coverage
-htmlcov/
-.coverage
-.coverage.*
-coverage.xml
-*.cover
-.hypothesis/
+# Test
 .pytest_cache/
+.coverage
 
-# Jupyter Notebook
+# Jupyter
 .ipynb_checkpoints
 
-# Environment variables
+# Env
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
 
-# Cache
-.cache/
-.mypy_cache/
-.dmypy.json
-dmypy.json
-
-# Streamlit
-.streamlit/
-
-# TensorFlow
-*.tfevents.*
-drive-download-20260110T151213Z-1-001.zip
+# Old files
+drive-download-*.zip
 training_notebooks/
