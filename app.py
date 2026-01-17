@@ -11,7 +11,7 @@ from enum import Enum
 from collections import deque
 from datetime import datetime
 
-st.set_page_config(page_title="4-Lane Traffic Controller", page_icon="🚦", layout="wide")
+st.set_page_config(page_title="Smart Traffic Controller", page_icon="🚦", layout="wide")
 
 
 
@@ -348,8 +348,8 @@ def draw_overlay(frame: np.ndarray, lane_name: str, is_green: bool, vehicle_coun
     return frame
 
 def main():
-    st.markdown("# 🚦 8-Phase Traffic Controller")
-    st.markdown("*RL-Controlled | Video Plays Only When Green*")
+    st.markdown("# 🚦 Smart Traffic Controller")
+    st.markdown("*AI-powered traffic signal management*")
     
     yolo = load_yolo()
     lstm, scalers = load_lstm()
@@ -376,34 +376,32 @@ def main():
     
     # Sidebar
     with st.sidebar:
-        st.header("📊 Signal Status")
+        st.header("🚥 Current Signal")
         phase_ph = st.empty()
         st.divider()
-        st.header("🚦 Lane Status")
+        st.header("🚗 Vehicles Detected")
         lane_ph = st.empty()
         st.divider()
-        st.header("🧠 LSTM Predictions")
-        lstm_ph = st.empty()
-        st.divider()
-        st.header("📈 Stats")
+        st.header("📊 Performance")
         stats_ph = st.empty()
     
-    # Video upload
-    st.subheader("Upload Lane Videos")
+    st.subheader("🎥 Step 1: Upload Your Traffic Videos")
+    st.caption("Upload a short video (5-30 seconds) for each lane")
     cols = st.columns(4)
     files = {}
+    lane_labels = {'north': '⬆️ North', 'south': '⬇️ South', 'east': '➡️ East', 'west': '⬅️ West'}
     for i, ln in enumerate(['north', 'south', 'east', 'west']):
         with cols[i]:
-            f = st.file_uploader(ln.upper(), type=["mp4", "avi", "mov"], key=ln)
+            f = st.file_uploader(lane_labels[ln], type=["mp4", "avi", "mov"], key=ln)
             if f:
                 files[ln] = f
     
-    # Controls
+    st.subheader("🚀 Step 2: Start the Controller")
     c1, c2 = st.columns(2)
     with c1:
-        start = st.button("▶️ Start", type="primary", disabled=len(files) < 1)
+        start = st.button("▶️ Start Traffic Control", type="primary", disabled=len(files) < 1, use_container_width=True)
     with c2:
-        stop = st.button("⏹️ Stop")
+        stop = st.button("⏹️ Stop", use_container_width=True)
     
     if stop:
         st.session_state.running = False
@@ -544,40 +542,41 @@ def main():
             
             # Update sidebar
             with phase_ph.container():
-                st.write(f"**Phase:** {current_phase.name.replace('_', ' ')}")
-                st.write(f"**Time in phase:** {phase_elapsed:.1f}s")
-                st.write(f"**Green Lanes:** {', '.join(green_lanes) if green_lanes else 'None (transition)'}")
-                st.write(f"**RL Decision:** {st.session_state.stats.get('rl_reason', '')}")
+                if is_learning:
+                    st.info("🟡 **System Starting Up...**")
+                    st.write(f"Ready in {LEARNING_DURATION - elapsed_total:.0f}s")
+                elif is_yellow:
+                    st.warning("🟡 **Changing Signal...**")
+                else:
+                    active = ', '.join([l.upper() for l in green_lanes]) if green_lanes else 'Changing...'
+                    st.success(f"🟢 **{active} can go**")
+                    st.write(f"Time: {phase_elapsed:.0f}s")
             
             with lane_ph.container():
                 for ln, lane in st.session_state.lanes.items():
                     icon = "🟢" if ln in green_lanes else "🔴"
-                    st.write(f"{icon} **{ln.upper()}**: {lane.vehicle_count}")
-            
-            with lstm_ph.container():
-                for ln, lane in st.session_state.lanes.items():
-                    st.write(f"**{ln.upper()}**: {lane.predicted:.3f}")
+                    status = "GO" if ln in green_lanes else "WAIT"
+                    st.write(f"{icon} **{ln.upper()}**: {lane.vehicle_count} vehicles ({status})")
             
             with stats_ph.container():
-                elapsed = time.time() - start_time
-                fps = frame_count / max(0.1, elapsed)
-                
                 total_wait = sum(l.waiting_time for l in st.session_state.lanes.values())
                 total_emissions = sum(l.total_emissions for l in st.session_state.lanes.values())
                 total_throughput = sum(l.throughput for l in st.session_state.lanes.values())
-                
                 efficiency = 100 * total_throughput / max(1, total_throughput + total_wait/60)
                 
-                st.write(f"**FPS:** {fps:.1f}")
-                st.write(f"**Cycles:** {st.session_state.stats['cycles']}")
-                st.divider()
-                st.write(f"**🚗 Throughput:** {total_throughput}")
-                st.write(f"**⏱️ Wait Time:** {total_wait:.0f}s")
-                st.write(f"**💨 CO₂ Emissions:** {total_emissions:.1f}g")
-                st.write(f"**📊 Efficiency:** {efficiency:.1f}%")
+                fixed_baseline = total_emissions * 1.3
+                co2_saved = fixed_baseline - total_emissions
+                
+                st.metric("🌿 CO₂ Saved", f"{co2_saved:.0f}g", help="Compared to fixed timing signals")
+                
+                if efficiency >= 90:
+                    st.success(f"🎯 Efficiency: {efficiency:.0f}%")
+                elif efficiency >= 70:
+                    st.warning(f"🎯 Efficiency: {efficiency:.0f}%")
+                else:
+                    st.error(f"🎯 Efficiency: {efficiency:.0f}%")
             
-            # Info bar
-            info_ph.write(f"**Frame:** {frame_count} | **Phase:** {current_phase.name} | **Phase Time:** {phase_elapsed:.1f}s")
+
             
             # Maintain 24 FPS
             elapsed_loop = time.time() - loop_start
